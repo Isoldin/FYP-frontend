@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import {useParams, useRouter} from 'next/navigation'
+import {useParams} from 'next/navigation'
 import Image from 'next/image'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
@@ -26,16 +26,19 @@ interface UploadDetails {
 }
 
 export default function UploadDetailsPage() {
-    const router = useRouter()
     const { id } = useParams()
     const [details, setDetails] = useState<UploadDetails | null>(null)
     const [oriImgUrl, setOriImgUrl] = useState('')
     const [processedImgUrl, setProcessedImgUrl] = useState('')
+    // const [token, setToken] = useState<string | null>(null)
     const token = localStorage.getItem('token')
 
     useEffect(() => {
+        // setToken(sessionStorage.getItem('token'))
         const fetchDetails = async () => {
-
+            if (!token) {
+                return;
+            }
             try {
                 const response = await axios.get(`http://localhost:8000/upload/detail?id=${id}`, {
                     headers: { Authorization: `Bearer ${token}` }

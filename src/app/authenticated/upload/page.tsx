@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import {useState, useRef, useEffect} from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Button } from "@/components/ui/button"
@@ -15,7 +15,9 @@ export default function UploadPage() {
     const [isUploading, setIsUploading] = useState(false)
     const fileInputRef = useRef<HTMLInputElement>(null)
     const router = useRouter()
+    // const [token, setToken] = useState<string | null>(null)
     const token = localStorage.getItem('token')
+
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0]
@@ -32,6 +34,10 @@ export default function UploadPage() {
             reader.readAsDataURL(file)
         }
     }
+
+    useEffect(() => {
+        // setToken(sessionStorage.getItem('token'))
+    },[])
 
     const handleUpload = async () => {
         if (selectedFile) {

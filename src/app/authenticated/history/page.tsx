@@ -17,13 +17,13 @@ export default function HistoryPage() {
     const [dataList, setdataList] = useState<uploadedImagesData[]>([])
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(true)
-    const [token, setToken] = useState<string | null>(null)
-
+    // const [token, setToken] = useState<string | null>(null)
+    const token = localStorage.getItem('token')
 
     useEffect(() => {
+        // setToken(sessionStorage.getItem('token'))
         const fetchData = async() => {
             try {
-                setToken(localStorage.getItem("token"))
                 setIsLoading(true)
                 const userDetail = await axios.get('http://localhost:8000/auth/detail', {
                     headers: {Authorization: `Bearer ${token}`},

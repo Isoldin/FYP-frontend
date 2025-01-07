@@ -1,6 +1,6 @@
 'use client'
 
-import {useEffect, useState} from 'react'
+import {useState} from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -32,10 +32,10 @@ export default function WelcomePage() {
       axios.defaults.headers.common['Authorization'] = `Bearer ${loginResponse.data.access_token}`;
 
       localStorage.setItem('token', loginResponse.data.access_token);
+      sessionStorage.setItem('token', loginResponse.data.access_token);
 
       setUsername('');
       setPassword('');
-
       router.push("/authenticated/dashboard")
 
     } catch (error) {
@@ -68,9 +68,11 @@ export default function WelcomePage() {
       axios.defaults.headers.common['Authorization'] = `Bearer ${loginResponse.data.access_token}`;
 
       localStorage.setItem('token', loginResponse.data.access_token);
+      sessionStorage.setItem('token', loginResponse.data.access_token);
 
       setUsername('');
       setPassword('');
+      setConfirmPassword('');
 
       router.push("/authenticated/dashboard")
 

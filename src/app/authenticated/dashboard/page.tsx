@@ -8,15 +8,16 @@ import axios from "axios"
 
 
 export default function DashboardPage() {
+    const router = useRouter()
     const [username, setUsername] = useState('')
     const [isAdmin, setIsAdmin] = useState(false)
-    const router = useRouter()
-    const [token, setToken] = useState<string | null>(null)
+    // const [token, setToken] = useState<string | null>(null)
+    const token = localStorage.getItem('token')
+
 
     useEffect(() => {
         const loadDashboard = async () => {
             try {
-                setToken(localStorage.getItem('token'))
                 const userDetail = await axios.get('http://localhost:8000/auth/detail', {
                     headers: {Authorization: `Bearer ${token}`},
                 })

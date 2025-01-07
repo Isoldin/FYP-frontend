@@ -17,13 +17,11 @@ export default function AllUploadsPage() {
     const [dataList, setdataList] = useState<uploadedImagesData[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const router = useRouter()
-    const [token, setToken] = useState<string | null>(null)
+    const token = localStorage.getItem('token')
 
     useEffect(() => {
         const fetchData = async() => {
             try {
-                setToken(localStorage.getItem("token"))
-
                 setIsLoading(true)
 
                 const response = await axios.get(`http://localhost:8000/pagination/uploaded_image`, {

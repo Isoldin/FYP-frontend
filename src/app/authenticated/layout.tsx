@@ -2,7 +2,7 @@
 
 import {useEffect, useState} from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import {usePathname} from 'next/navigation'
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import axios from "axios";
 
@@ -13,13 +13,15 @@ export default function AuthenticatedLayout({
 }) {
     const [isAdmin, setIsAdmin] = useState(false)
     const pathname = usePathname()
-    const [token, setToken] = useState<string | null>(null)
+    // const [token, setToken] = useState<string | null>(null)
+    const token = localStorage.getItem('token')
 
     useEffect(() => {
         const loadLayout = async() => {
             try {
-                 setToken(localStorage.getItem('token'))
-
+                // if(!token) {
+                //     return
+                // }
                 const userDetail = await axios.get(await axios.get('http://localhost:8000/auth/detail', {
                     headers: {Authorization: `Bearer ${token}`},
                 }))
@@ -34,6 +36,10 @@ export default function AuthenticatedLayout({
         }
         loadLayout()
     }, [token])
+
+    const handleLogout = () => {
+        sessionStorage.removeItem('token');
+    }
 
     const menuItems = [
         { title: 'Dashboard', path: '/authenticated/dashboard', icon: '🏠' },
@@ -74,7 +80,7 @@ export default function AuthenticatedLayout({
                             <SidebarGroupContent>
                                 <SidebarMenu>
                                     <SidebarMenuItem>
-                                        <SidebarMenuButton asChild>
+                                        <SidebarMenuButton asChild onClick={handleLogout}>
                                             <Link href="/">
                                                 <span className="mr-2">🚪</span>
                                                 <span>Logout</span>
