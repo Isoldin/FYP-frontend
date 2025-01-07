@@ -1,101 +1,140 @@
-import Image from "next/image";
+'use client'
 
-export default function Home() {
+import {useEffect, useState} from 'react'
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useRouter } from 'next/navigation'
+import axios from "axios"
+
+export default function WelcomePage() {
+  const router = useRouter()
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    try {
+      const loginFormData = {
+        'username': username,
+        'password': password,
+      }
+
+      const loginResponse = await axios.post('http://localhost:8000/auth/token', loginFormData,
+          {
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+          });
+
+      axios.defaults.headers.common['Authorization'] = `Bearer ${loginResponse.data.access_token}`;
+
+      localStorage.setItem('token', loginResponse.data.access_token);
+
+      setUsername('');
+      setPassword('');
+
+      router.push("/authenticated/dashboard")
+
+    } catch (error) {
+      alert(error)
+    }
+  }
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (password !== confirmPassword) {
+      alert("Passwords don't match!")
+      return
+    }
+
+    try {
+      const registerUserForm = {
+        'username': username,
+        'password': password,
+      }
+
+      await axios.post('http://localhost:8000/auth/register', registerUserForm, {
+        headers: {'Content-Type': 'application/json'},
+      })
+
+      const loginResponse = await axios.post('http://localhost:8000/auth/token', registerUserForm,
+          {
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+          });
+
+      axios.defaults.headers.common['Authorization'] = `Bearer ${loginResponse.data.access_token}`;
+
+      localStorage.setItem('token', loginResponse.data.access_token);
+
+      setUsername('');
+      setPassword('');
+
+      router.push("/authenticated/dashboard")
+
+    } catch (error) {
+      alert(error)
+    }
+  }
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+      <div className="min-h-screen bg-gradient-to-br from-purple-700 to-indigo-800 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle className="text-2xl text-center text-purple-700">Welcome to Survivor Radar</CardTitle>
+            <CardDescription className="text-center">Login or create an account to continue</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="login">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="login">Login</TabsTrigger>
+                <TabsTrigger value="register">Register</TabsTrigger>
+              </TabsList>
+              <TabsContent value="login">
+                <form onSubmit={handleLogin}>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="username">Username</Label>
+                      <Input id="username" type="text" value={username} onChange={(e) => setUsername(e.target.value)} required />
+                    </div>
+                    <div>
+                      <Label htmlFor="password">Password</Label>
+                      <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                    </div>
+                    <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700">Login</Button>
+                  </div>
+                </form>
+              </TabsContent>
+              <TabsContent value="register">
+                <form onSubmit={handleRegister}>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="reg-username">Username</Label>
+                      <Input id="reg-username" type="text" value={username} onChange={(e) => setUsername(e.target.value)} required />
+                    </div>
+                    <div>
+                      <Label htmlFor="reg-password">Password</Label>
+                      <Input id="reg-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                    </div>
+                    <div>
+                      <Label htmlFor="confirm-password">Confirm Password</Label>
+                      <Input id="confirm-password" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+                    </div>
+                    <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700">Register</Button>
+                  </div>
+                </form>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+          <CardFooter>
+            <p className="text-xs text-center w-full">
+              By logging in or registering, you agree to our <a href="/terms-and-conditions" className="text-purple-600 hover:underline">Terms and Conditions</a>.
+            </p>
+          </CardFooter>
+        </Card>
+      </div>
+  )
 }
+
