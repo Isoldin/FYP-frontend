@@ -38,8 +38,10 @@ export default function WelcomePage() {
       setPassword('');
       router.push("/authenticated/dashboard")
 
-    } catch (error) {
-      alert(error)
+    } catch (error:any) {
+      if (error.response && error.response.data && error.response.data.detail) {
+        alert(error.response.data.detail);
+      }
     }
   }
 
@@ -76,8 +78,10 @@ export default function WelcomePage() {
 
       router.push("/authenticated/dashboard")
 
-    } catch (error) {
-      alert(error)
+    } catch (error: any) {
+      if (error.response && error.response.data && error.response.data.detail) {
+        alert(error.response.data.detail);
+      }
     }
   }
 
